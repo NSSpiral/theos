@@ -1,4 +1,4 @@
-ifeq ($(_THEOS_RULES_LOADED),$(_THEOS_FALSE))
+ifeq ($(_THEOS_RULES_LOADED),)
 include $(THEOS_MAKE_PATH)/rules.mk
 endif
 
@@ -8,10 +8,10 @@ ifeq ($(_THEOS_MAKE_PARALLEL_BUILDING), no)
 internal-tool-all_:: $(_OBJ_DIR_STAMPS) $(THEOS_OBJ_DIR)/$(THEOS_CURRENT_INSTANCE)$(TARGET_EXE_EXT)
 else
 internal-tool-all_:: $(_OBJ_DIR_STAMPS)
-	$(ECHO_MAKE)$(MAKE) -f $(_THEOS_PROJECT_MAKEFILE_NAME) $(_THEOS_MAKEFLAGS) \
+	$(ECHO_NOTHING)$(MAKE) --no-print-directory --no-keep-going \
 		internal-tool-compile \
 		_THEOS_CURRENT_TYPE=$(_THEOS_CURRENT_TYPE) THEOS_CURRENT_INSTANCE=$(THEOS_CURRENT_INSTANCE) _THEOS_CURRENT_OPERATION=compile \
-		THEOS_BUILD_DIR="$(THEOS_BUILD_DIR)" _THEOS_MAKE_PARALLEL=yes
+		THEOS_BUILD_DIR="$(THEOS_BUILD_DIR)" _THEOS_MAKE_PARALLEL=yes$(ECHO_END)
 
 internal-tool-compile: $(THEOS_OBJ_DIR)/$(THEOS_CURRENT_INSTANCE)$(TARGET_EXE_EXT)
 endif
@@ -26,10 +26,8 @@ ifeq ($(LOCAL_INSTALL_PATH),)
 	endif
 endif
 
-ifneq ($($(THEOS_CURRENT_INSTANCE)_INSTALL),0)
 internal-tool-stage_::
 	$(ECHO_NOTHING)mkdir -p "$(THEOS_STAGING_DIR)$(LOCAL_INSTALL_PATH)"$(ECHO_END)
 	$(ECHO_NOTHING)cp $(THEOS_OBJ_DIR)/$(THEOS_CURRENT_INSTANCE)$(TARGET_EXE_EXT) "$(THEOS_STAGING_DIR)$(LOCAL_INSTALL_PATH)"$(ECHO_END)
-endif
 
 $(eval $(call __mod,instance/tool.mk))

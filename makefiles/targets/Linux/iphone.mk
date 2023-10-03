@@ -2,30 +2,28 @@ ifeq ($(_THEOS_TARGET_LOADED),)
 _THEOS_TARGET_LOADED := 1
 THEOS_TARGET_NAME := iphone
 
-_THEOS_TARGET_PLATFORM_NAME := iphoneos
-_THEOS_TARGET_PLATFORM_SDK_NAME := iPhoneOS
-_THEOS_TARGET_PLATFORM_FLAG_NAME := iphoneos
-_THEOS_TARGET_PLATFORM_SWIFT_NAME := apple-ios
+SDKTARGET ?= arm-apple-darwin9
+SDKBINPATH ?= /opt/iphone-sdk-3.0/prefix/bin
+SYSROOT ?= /opt/iphone-sdk-3.0/sysroot
 
-SWIFTBINPATH ?= $(THEOS)/toolchain/swift/bin
-SDKBINPATH ?= $(THEOS)/toolchain/$(THEOS_PLATFORM_NAME)/$(THEOS_TARGET_NAME)/bin
+PREFIX := $(SDKBINPATH)/$(SDKTARGET)-
 
-# Determine toolchain to use based on file existence.
-ifeq ($(_THEOS_TARGET_SDK_BIN_PREFIX),)
-ifeq ($(call __exists,$(SDKBINPATH)/armv7-apple-darwin11-ld),$(_THEOS_TRUE))
-_THEOS_TARGET_SDK_BIN_PREFIX ?= armv7-apple-darwin11-
-else ifeq ($(call __exists,$(SDKBINPATH)/arm64-apple-darwin14-ld),$(_THEOS_TRUE))
-_THEOS_TARGET_SDK_BIN_PREFIX ?= arm64-apple-darwin14-
-else
-# toolchain has no prefix so we are responsible of supplying target triple to clang for cross compiling
-_THEOS_TARGET_USE_CLANG_TARGET_FLAG := $(_THEOS_TRUE)
-endif
-endif
+TARGET_CC ?= $(PREFIX)gcc
+TARGET_CXX ?= $(PREFIX)g++
+TARGET_LD ?= $(PREFIX)g++
+TARGET_STRIP ?= $(PREFIX)strip
+TARGET_STRIP_FLAGS ?= -x
+TARGET_CODESIGN_ALLOCATE ?= $(PREFIX)codesign_allocate
+TARGET_CODESIGN ?= ldid
+TARGET_CODESIGN_FLAGS ?= -S
 
-PREFIX := $(SDKBINPATH)/$(_THEOS_TARGET_SDK_BIN_PREFIX)
+include $(THEOS_MAKE_PATH)/targets/_common/install_deb_remote.mk
+include $(THEOS_MAKE_PATH)/targets/_common/darwin.mk
+include $(THEOS_MAKE_PATH)/targets/_common/darwin_flat_bundle.mk
 
-include $(THEOS_MAKE_PATH)/targets/_common/darwin_head.mk
-include $(THEOS_MAKE_PATH)/targets/_common/iphone.mk
-include $(THEOS_MAKE_PATH)/targets/_common/darwin_tail.mk
+TARGET_PRIVATE_FRAMEWORK_PATH = $(SYSROOT)/System/Library/PrivateFrameworks
 
+SDKFLAGS := -isysroot $(SYSROOT)
+TARGET_CFLAGS := $(SDKFLAGS)
+TARGET_LDFLAGS := $(SDKFLAGS) -multiply_defined suppress
 endif

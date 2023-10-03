@@ -10,6 +10,11 @@
 // has already been removed for other platforms, such as macOS and tvOS, and is not used
 // at all for Swift files.
 
+#define NB [NSBundle mainBundle]
+#define UD [NSUserDefaults standardUserDefaults]
+#define FM [NSFileManager defaultManager]
+#define ROOT_STACK [[objc_getClass("BRApplicationStackManager") singleton] stack]
+
 #ifdef DEBUG
 	#define __DEBUG__
 #endif
@@ -24,11 +29,11 @@
 			#import <TargetConditionals.h>
 		#endif
 		#if TARGET_OS_IPHONE
-			#import <theos/BackwardsCompat.h>
+			//#import <theos/BackwardsCompat.h>
 			#import <Foundation/Foundation.h>
 			#import <UIKit/UIKit.h>
-			#import <theos/IOSMacros.h>
-			#import <HBLog.h>
+			//#import <theos/IOSMacros.h>
+			//#import <HBLog.h>
 		#endif
 	#endif
 #endif

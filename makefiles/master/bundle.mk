@@ -1,6 +1,6 @@
 BUNDLE_NAME := $(strip $(BUNDLE_NAME))
 
-ifeq ($(_THEOS_RULES_LOADED),$(_THEOS_FALSE))
+ifeq ($(_THEOS_RULES_LOADED),)
 include $(THEOS_MAKE_PATH)/rules.mk
 endif
 
@@ -14,6 +14,6 @@ internal-clean:: $(BUNDLES_WITH_SUBPROJECTS:=.clean.bundle.subprojects)
 endif
 
 $(BUNDLE_NAME):
-	$(ECHO_MAKE)$(MAKE) -f $(_THEOS_PROJECT_MAKEFILE_NAME) $(_THEOS_MAKEFLAGS) $@.all.bundle.variables
+	@$(MAKE) --no-print-directory --no-keep-going $@.all.bundle.variables
 
 $(eval $(call __mod,master/bundle.mk))
